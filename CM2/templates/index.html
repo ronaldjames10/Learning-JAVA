@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Decorated Calendar App</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+    <div class="background-shapes"></div>
+
+    <div class="app-container">
+        <div class="calendar-container glass-card">
+            <div class="calendar-header">
+                <a href="/?year={{ current_year if current_month > 1 else current_year - 1 }}&month={{ current_month - 1 if current_month > 1 else 12 }}" class="nav-arrow">
+                    <i class="fas fa-chevron-left"></i>
+                </a>
+                
+                <form class="date-selector-form" method="GET" action="/">
+                    <select name="month" class="date-select" onchange="this.form.submit()">
+                        {% for i in range(1, 13) %}
+                            <option value="{{ i }}" {% if i == current_month %}selected{% endif %}>
+                                {{ calendar.month_name[i] }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    <select name="year" class="date-select" onchange="this.form.submit()">
+                        {% for y in year_range %}
+                            <option value="{{ y }}" {% if y == current_year %}selected{% endif %}>
+                                {{ y }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </form>
+                
+                <a href="/?year={{ current_year if current_month < 12 else current_year + 1 }}&month={{ current_month + 1 if current_month < 12 else 1 }}" class="nav-arrow">
+                    <i class="fas fa-chevron-right"></i>
+                </a>
+            </div>
+            <div class="calendar-grid">
+                <div class="day-name">Sun</div>
+                <div class="day-name">Mon</div>
+                <div class="day-name">Tue</div>
+                <div class="day-name">Wed</div>
+                <div class="day-name">Thu</div>
+                <div class="day-name">Fri</div>
+                <div class="day-name">Sat</div>
+                {% for week in calendar_data %}
+                    {% for day_data in week %}
+                        {% if day_data %}
+                            <div class="day-cell 
+                                {% if day_data.is_today %}today{% endif %}
+                                {% if day_data.has_reminder %}has-reminder{% endif %}"
+                                data-date="{{ current_year }}-{{ '%02d'|format(current_month) }}-{{ '%02d'|format(day_data.day) }}">
+                                <span>{{ day_data.day }}</span>
+                            </div>
+                        {% else %}
+                            <div class="day-cell empty"></div>
+                        {% endif %}
+                    {% endfor %}
+                {% endfor %}
+            </div>
+        </div>
+        <div class="reminders-panel glass-card">
+            <div class="reminders-header">
+                <h2>Reminders</h2>
+                <button id="view-all-btn" class="icon-btn">
+                    <i class="fas fa-list-ul"></i>
+                    <span>View All</span>
+                </button>
+            </div>
+            <h3 id="selected-date-display">Select a date to begin</h3>
+            <div id="reminder-list">
+                </div>
+            <div id="add-reminder-form" class="hidden">
+                <input type="text" id="reminder-input" placeholder="Add a new reminder...">
+                <button id="add-reminder-btn" class="icon-btn"><i class="fas fa-plus"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

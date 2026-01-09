@@ -1,0 +1,281 @@
+:root {
+    --primary-glow: rgba(147, 112, 219, 0.5); /* Medium Purple */
+    --secondary-glow: rgba(0, 191, 255, 0.5); /* Deep Sky Blue */
+    --font-color: #f0f0f0;
+    --font-color-muted: #cccccc;
+    --glass-bg: rgba(255, 255, 255, 0.1);
+    --glass-border: rgba(255, 255, 255, 0.2);
+    --hover-bg: rgba(255, 255, 255, 0.2);
+    --selected-bg: rgba(0, 191, 255, 0.4);
+    --today-border: #00ffc3;
+    --reminder-dot: #ff6b6b;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    color: var(--font-color);
+    background: linear-gradient(45deg, #1d2b64, #48065f, #f8cdda);
+    background-size: 400% 400%;
+    animation: gradientAnimation 15s ease infinite;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+}
+
+@keyframes gradientAnimation {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.app-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    width: 100%;
+    max-width: 1200px;
+    justify-content: center;
+}
+
+.glass-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+    padding: 2rem;
+}
+
+.calendar-container {
+    flex: 2;
+    min-width: 480px;
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.nav-arrow {
+    font-size: 1.5rem;
+    color: var(--font-color);
+    padding: 0.5rem;
+    border-radius: 50%;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.nav-arrow:hover {
+    background: var(--hover-bg);
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0.75rem;
+}
+
+.day-name {
+    font-weight: 600;
+    text-align: center;
+    padding-bottom: 0.5rem;
+    color: var(--font-color-muted);
+}
+
+.day-cell {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    aspect-ratio: 1 / 1;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    font-size: 1rem;
+    font-weight: 400;
+}
+
+.day-cell:not(.empty):hover {
+    background: var(--hover-bg);
+    transform: scale(1.05);
+}
+
+.day-cell.today {
+    box-shadow: inset 0 0 0 2px var(--today-border);
+    color: var(--today-border);
+    font-weight: 700;
+}
+
+.day-cell.selected {
+    background: var(--selected-bg);
+    color: var(--font-color);
+    transform: scale(1.1);
+    font-weight: 700;
+}
+
+.day-cell.has-reminder > span::after {
+    content: '';
+    position: absolute;
+    bottom: 15%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 6px;
+    height: 6px;
+    background-color: var(--reminder-dot);
+    border-radius: 50%;
+    box-shadow: 0 0 5px var(--reminder-dot);
+}
+
+.reminders-panel {
+    flex: 1;
+    min-width: 320px;
+    display: flex;
+    flex-direction: column;
+}
+
+.reminders-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--glass-border);
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
+}
+
+.reminders-header h2 {
+    font-size: 1.5em;
+    font-weight: 600;
+    margin: 0;
+    padding: 0;
+    border: none;
+}
+
+#selected-date-display {
+    color: var(--font-color-muted);
+    font-weight: 300;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+#reminder-list {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding-right: 0.5rem;
+}
+
+/* Custom Scrollbar */
+#reminder-list::-webkit-scrollbar { width: 6px; }
+#reminder-list::-webkit-scrollbar-track { background: transparent; }
+#reminder-list::-webkit-scrollbar-thumb { background: var(--glass-border); border-radius: 3px; }
+#reminder-list::-webkit-scrollbar-thumb:hover { background: var(--hover-bg); }
+
+.reminder-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.15);
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    margin-bottom: 0.75rem;
+    animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.reminder-date-header {
+    font-weight: 600;
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+    color: var(--font-color);
+    border-bottom: 1px solid var(--glass-border);
+    padding-bottom: 0.25rem;
+}
+
+#add-reminder-form {
+    display: flex;
+    margin-top: 1rem;
+}
+
+#add-reminder-form.hidden { display: none; }
+
+#reminder-input {
+    flex-grow: 1;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--glass-border);
+    border-radius: 8px 0 0 8px;
+    padding: 0.75rem;
+    color: var(--font-color);
+    font-family: 'Poppins', sans-serif;
+    font-size: 1rem;
+}
+
+#reminder-input:focus {
+    outline: none;
+    box-shadow: inset 0 0 0 2px var(--secondary-glow);
+}
+
+.icon-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    border: none;
+    background-color: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    color: var(--font-color);
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+}
+#add-reminder-btn { border-radius: 0 8px 8px 0; }
+.icon-btn:hover { background-color: var(--hover-bg); }
+.delete-btn {
+    background: none;
+    border: none;
+    color: var(--font-color-muted);
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 0.5rem;
+    transition: color 0.3s ease;
+}
+.delete-btn:hover { color: var(--reminder-dot); }
+
+/* NEW Styles for the date selector form */
+.date-selector-form {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.date-select {
+    background: transparent;
+    border: 1px solid var(--glass-border);
+    color: var(--font-color);
+    padding: 0.5rem;
+    border-radius: 8px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 1em;
+    cursor: pointer;
+}
+
+.date-select:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--secondary-glow);
+}
+
+.date-select option {
+    background: #2c2c54;
+    color: var(--font-color);
+}
