@@ -1,48 +1,73 @@
 #include <stdio.h>
-
-void swap(int *a, int *b) {
-    int t = *a;
-    *a = *b;
-    *b = t;
-}
+#define MAX 10
 
 int main() {
-    int n, i, j;
+    int n, m, i, j, k;
+    int alloc[MAX][MAX], max[MAX][MAX], avail[MAX];
+    int need[MAX][MAX], finish[MAX], safeSeq[MAX];
+    int count = 0;
 
-    printf("Enter number of processes: ");
+    printf("Enter the number of processes: ");
     scanf("%d", &n);
 
-    int pid[n], bt[n], priority[n], wt[n], tat[n];
+    printf("Enter the number of resource types: ");
+    scanf("%d", &m);
 
-    for (i = 0; i < n; i++) {
-        pid[i] = i + 1;
-        printf("Enter burst time and priority for process %d: ", i + 1);
-        scanf("%d%d", &bt[i], &priority[i]);
-    }
+    printf("Enter the allocation matrix:\n");
+    for (i = 0; i < n; i++)
+        for (j = 0; j < m; j++)
+            scanf("%d", &alloc[i][j]);
 
-    for (i = 0; i < n - 1; i++) {
-        for (j = i + 1; j < n; j++) {
-            if (priority[i] > priority[j]) {
-                swap(&priority[i], &priority[j]);
-                swap(&bt[i], &bt[j]);
-                swap(&pid[i], &pid[j]);
+    printf("Enter the maximum matrix:\n");
+    for (i = 0; i < n; i++)
+        for (j = 0; j < m; j++)
+            scanf("%d", &max[i][j]);
+
+    printf("Enter the available resources:\n");
+    for (j = 0; j < m; j++)
+        scanf("%d", &avail[j]);
+
+    // Calculate Need matrix
+    for (i = 0; i < n; i++)
+        for (j = 0; j < m; j++)
+            need[i][j] = max[i][j] - alloc[i][j];
+
+    for (i = 0; i < n; i++)
+        finish[i] = 0;
+
+    while (count < n) {
+        int found = 0;
+        for (i = 0; i < n; i++) {
+            if (!finish[i]) {
+                int canProceed = 1;
+                for (j = 0; j < m; j++) {
+                    if (need[i][j] > avail[j]) {
+                        canProceed = 0;
+                        break;
+                    }
+                }
+
+                if (canProceed) {
+                    for (k = 0; k < m; k++)
+                        avail[k] += alloc[i][k];
+
+                    safeSeq[count++] = i;
+                    finish[i] = 1;
+                    found = 1;
+                }
             }
+        }
+
+        if (!found) {
+            printf("\nSystem is in an UNSAFE state! Deadlock may occur.\n");
+            return 1;
         }
     }
 
-    wt[0] = 0;
-    for (i = 1; i < n; i++) {
-        wt[i] = wt[i - 1] + bt[i - 1];
-    }
-
-    for (i = 0; i < n; i++) {
-        tat[i] = wt[i] + bt[i];
-    }
-
-    printf("\nProcess\tPriority\tBT\tWT\tTAT\n");
-    for (i = 0; i < n; i++) {
-        printf("%d\t%d\t\t%d\t%d\t%d\n", pid[i], priority[i], bt[i], wt[i], tat[i]);
-    }
+    printf("\nSystem is in a SAFE state.\nSafe Sequence is: ");
+    for (i = 0; i < n; i++)
+        printf("P%d ", safeSeq[i]);
+    printf("\n");
 
     return 0;
 }
